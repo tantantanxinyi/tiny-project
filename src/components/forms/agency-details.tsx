@@ -1,9 +1,12 @@
 'use client';
-import React, { use, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Agency } from '@prisma/client';
+import * as z from 'zod';
+import { useForm } from 'react-hook-form';
 import { useToast } from '../ui/use-toast';
 import { useRouter } from 'next/navigation';
 import { AlertDialog } from '../ui/alert-dialog';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Card,
   CardContent,
@@ -11,17 +14,22 @@ import {
   CardHeader,
   CardTitle,
 } from '../ui/card';
-import { Form } from '../ui/form';
-import * as z from 'zod';
-import { useForm } from 'react-hook-form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../ui/form';
+import FileUpload from '../global/file-upload';
 
 type Props = {
   data?: Partial<Agency>;
 };
 
-
 const FormSchema = z.object({
-  name: z.string().min(2,{message: 'Agency name must be at least 2 chars'}),
+  name: z.string().min(2, { message: 'Agency name must be at least 2 chars' }),
   companyEmail: z.string().min(1),
   companyPhone: z.string().min(1),
   whiteLabel: z.boolean(),
@@ -29,16 +37,42 @@ const FormSchema = z.object({
   city: z.string().min(1),
   zipCode: z.string().min(1),
   state: z.string().min(1),
-  country: z.string().min(1), 
+  country: z.string().min(1),
   agencyLogo: z.string().min(1),
-})
+});
 
 const AgencyDetails = ({ data }: Props) => {
   const { toast } = useToast();
   const router = useRouter(); // this is a client component since we're using hooks;
 
   const [deletingAgency, setDeletingAgency] = useState(false);
-  const form = useForm<z.infer<typeof FormSchema>>();
+
+  const form = useForm<z.infer<typeof FormSchema>>({
+    mode: 'onChange',
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      name: data?.name,
+      companyEmail: data?.companyEmail,
+      companyPhone: data?.companyPhone,
+      whiteLabel: data?.whiteLabel || false,
+      address: data?.address,
+      city: data?.city,
+      zipCode: data?.zipCode,
+      state: data?.state,
+      country: data?.country,
+      agencyLogo: data?.agencyLogo,
+    },
+  });
+
+  const isLoading = form.formState.isSubmitting;
+
+  useEffect(() => {
+    if (data) {
+      form.reset(data);
+    }
+  }, [data]);
+
+  const handleSubmit = async () => {};
 
   return (
     <AlertDialog>
@@ -51,7 +85,31 @@ const AgencyDetails = ({ data }: Props) => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form></Form>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(handleSubmit)}
+              className="space-y-4"
+            >
+              <FormField
+                disabled={isLoading}
+                control={form.control}
+                name="agencyLogo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Agency Logo</FormLabel>
+                    <FormControl>
+                      <FileUpload
+                        apiEndpoint="agencyLogo"
+                        onChange={field.onChange}
+                        value={field.value}
+                      ></FileUpload>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              ></FormField>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </AlertDialog>
