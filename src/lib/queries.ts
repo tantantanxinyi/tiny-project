@@ -3,7 +3,7 @@
 import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import { db } from './db';
 import { redirect } from 'next/navigation';
-import { User } from '@prisma/client';
+import { Agency, User } from '@prisma/client';
 import { sub } from 'date-fns';
 
 export const getAuthUserDetails = async () => {
@@ -161,28 +161,41 @@ export const verifyAndAcceptInvitation = async () => {
     });
 
     // if userDetails is exist, give a subaccount by default
-    if(userDetails){
-      await clerkClient.users.updateUserMetadata(user.id,{
-        privateMetadata:{
-          role: userDetails.role || "SUBACCOUNT_USER"
-        }
-      })
+    if (userDetails) {
+      await clerkClient.users.updateUserMetadata(user.id, {
+        privateMetadata: {
+          role: userDetails.role || 'SUBACCOUNT_USER',
+        },
+      });
 
       await db.invitation.delete({
-        where:{
-          email: userDetails.email
+        where: {
+          email: userDetails.email,
         },
-      })
-      return userDetails.agencyId
-    }else{
+      });
+      return userDetails.agencyId;
+    } else {
       return null;
     }
-  }else{
+  } else {
     const agency = await db.user.findUnique({
-      where:{
-        email: user.emailAddresses[0].emailAddress
-      }
-    })
+      where: {
+        email: user.emailAddresses[0].emailAddress,
+      },
+    });
     return agency ? agency.agencyId : null;
   }
+};
+
+export const updateAgencyDetails = async (
+  agencyId: string,
+  agencyDetails: Partial<Agency>,
+) => {
+  const response = await db.agency.update({
+    where: {
+      id: agencyId,
+    },
+    data: agencyDetails,
+  });
+  return response;
 };
