@@ -4,7 +4,6 @@ import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import { db } from './db';
 import { redirect } from 'next/navigation';
 import { Agency, User } from '@prisma/client';
-import { sub } from 'date-fns';
 
 export const getAuthUserDetails = async () => {
   const user = await currentUser();
@@ -198,4 +197,30 @@ export const updateAgencyDetails = async (
     data: agencyDetails,
   });
   return response;
+};
+
+export const deleteAgency = async (agencyId: string) => {
+  const response = await db.agency.delete({
+    where: {
+      id: agencyId,
+    },
+  });
+  return response;
+};
+
+export const initUser = async (newUser: Partial<User>) => {
+  const user = await currentUser();
+  if(!user) return;
+  const updateUserMetadata = await db.user.upsert({
+    where:{
+      email:user.emailAddresses[0].emailAddress,
+    },
+    update: newUser,
+    create:{
+      id:user.id,
+      avatarUrl:user.imageUrl,
+      email:user.emailAddresses[0].emailAddress,
+      role:newUser.role || "SUBACCOUNT_USER"
+    }
+  })
 };

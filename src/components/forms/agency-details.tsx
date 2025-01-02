@@ -5,7 +5,16 @@ import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { useToast } from '../ui/use-toast';
 import { useRouter } from 'next/navigation';
-import { AlertDialog } from '../ui/alert-dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../ui/alert-dialog';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Card,
@@ -27,6 +36,7 @@ import FileUpload from '../global/file-upload';
 import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
 import {
+  deleteAgency,
   savaActivityLogNotification,
   updateAgencyDetails,
 } from '@/lib/queries';
@@ -34,7 +44,7 @@ import { Button } from '../ui/button';
 import { Loader2 } from 'lucide-react';
 import Loading from '../global/loading';
 import { NumberInput } from '@tremor/react';
-import { AlertDialogTrigger } from '@radix-ui/react-alert-dialog';
+import { AlertDialogTrigger } from '../ui/alert-dialog';
 
 type Props = {
   data?: Partial<Agency>;
@@ -84,7 +94,60 @@ const AgencyDetails = ({ data }: Props) => {
     }
   }, [data]);
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async (values: z.infer<typeof FormSchema>) => {
+    try {
+      let newUserData;
+      let customeId;
+      if (!data?.id) {
+        const bodyData = {
+          email: values.companyEmail,
+          name: values.name,
+          shipping: {
+            address: {
+              city: values.city,
+              country: values.country,
+              line1: values.address,
+              postal_code: values.zipCode,
+              state: values.zipCode,
+            },
+            name: values.name,
+          },
+          address: {
+            city: values.city,
+            country: values.country,
+            line1: values.address,
+            postal_code: values.zipCode,
+            state: values.zipCode,
+          },
+        };
+      }
+
+      newUserData = await initUser({
+        role: 'AGENCY_OWNER',
+      });
+    } catch (error) {}
+  };
+
+  const handleDeleteAgency = async () => {
+    if (!data?.id) return;
+    setDeletingAgency(true);
+    // WIP: discontinue the subscription 
+    try {
+      const response = await deleteAgency(data?.id);
+      toast({
+        title: 'Deleted Agency',
+        description: 'Delete your agency and all your sub accounts.',
+      });
+      router.refresh();
+    } catch (error) {
+      toast({
+        title: 'opppse!',
+        description: "coundn't delete agency",
+        variant: 'destructive',
+      });
+      setDeletingAgency(false);
+    }
+  };
 
   return (
     <AlertDialog>
@@ -307,22 +370,46 @@ const AgencyDetails = ({ data }: Props) => {
             </form>
           </Form>
 
-          <div className="flex flex-row items-center rounded-lg border border-destructive gap-4 p-4 mt-4">
-            <div>
-              <div>Danger Zone</div>
+          {data?.id && (
+            <div className="flex flex-row items-center rounded-lg border border-destructive gap-4 p-4 mt-4">
+              <div>
+                <div>Danger Zone</div>
+              </div>
+              <div className="text-muted-foreground">
+                Deleting your agency cannot be undone. This will also delete all
+                sub accounts and all data related to your sub accounts. Sub
+                accounts will no longer have access to funnels, contacts etc.
+              </div>
+              <AlertDialogTrigger
+                disabled={isLoading || deletingAgency}
+                className="text-red-600 p-2 text-center mt-2 rounded-md hover:bg-red-600 hover:text-white whitespace-nowrap"
+              >
+                {deletingAgency ? 'Deleting...' : 'Delete Agency'}
+              </AlertDialogTrigger>
             </div>
-            <div className="text-muted-foreground">
-              Deleting your agency cannot be undone. This will also delete all
-              sub accounts and all data related to your sub accounts. Sub
-              accounts will no longer have access to funnels, contacts etc.
-            </div>
-          </div>
-          <AlertDialogTrigger
-            disabled={isLoading || deletingAgency}
-            className="text-red-600 p-2 text-center mt-2 rounded-md hover:bg-red-600 hover:text-white whitespace-nowrap"
-          >
-            {deletingAgency ? 'Deleting...' : 'Delete Agency'}
-          </AlertDialogTrigger>
+          )}
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-left">
+                Are you absolutely sure?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-left">
+                This action cannot be undone. This will permanently delete the
+                Agency account and all related sub accounts.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="flex items-center">
+              <AlertDialogCancel className="mb-2">Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={deletingAgency}
+                className="bg-destructive hover:bg-destructive"
+                onClick={handleDeleteAgency}
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
         </CardContent>
       </Card>
     </AlertDialog>
