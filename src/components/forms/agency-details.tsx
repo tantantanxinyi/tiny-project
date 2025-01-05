@@ -37,14 +37,17 @@ import { Input } from '../ui/input';
 import { Switch } from '../ui/switch';
 import {
   deleteAgency,
+  initUser,
   savaActivityLogNotification,
   updateAgencyDetails,
+  upsertAgency,
 } from '@/lib/queries';
 import { Button } from '../ui/button';
 import { Loader2 } from 'lucide-react';
 import Loading from '../global/loading';
 import { NumberInput } from '@tremor/react';
 import { AlertDialogTrigger } from '../ui/alert-dialog';
+import { v4 } from 'uuid';
 
 type Props = {
   data?: Partial<Agency>;
@@ -121,17 +124,46 @@ const AgencyDetails = ({ data }: Props) => {
           },
         };
       }
-
+      //WIP custid
       newUserData = await initUser({
         role: 'AGENCY_OWNER',
       });
-    } catch (error) {}
+      if (!data?.id) {
+        const response = await upsertAgency({
+          id: data?.id ? data.id : v4(),
+          address: values.address,
+          agencyLogo: values.agencyLogo,
+          city: values.city,
+          companyPhone: values.companyPhone,
+          country: values.country,
+          name: values.name,
+          state: values.state,
+          whiteLabel: values.whiteLabel,
+          zipCode: values.zipCode,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          companyEmail: values.companyEmail,
+          connectAccountId: '',
+          goal: 5,
+        });
+        toast({
+          title: 'Created Agency',
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: 'Oppse!',
+        description: "coundn't create agency",
+        variant: 'destructive',
+      });
+    }
   };
 
   const handleDeleteAgency = async () => {
     if (!data?.id) return;
     setDeletingAgency(true);
-    // WIP: discontinue the subscription 
+    // WIP: discontinue the subscription
     try {
       const response = await deleteAgency(data?.id);
       toast({
