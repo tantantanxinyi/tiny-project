@@ -100,7 +100,6 @@ const AgencyDetails = ({ data }: Props) => {
   const handleSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
       let newUserData;
-      let customeId;
       if (!data?.id) {
         const bodyData = {
           email: values.companyEmail,
@@ -149,6 +148,15 @@ const AgencyDetails = ({ data }: Props) => {
         toast({
           title: 'Created Agency',
         });
+        // refresh the browser
+        // if (data?.id) {
+        //   return router.refresh();
+        // }
+        // if (response) {
+        //   return router.refresh();
+        // }
+
+        return router.refresh(); 
       }
     } catch (error) {
       console.log(error);
@@ -220,7 +228,7 @@ const AgencyDetails = ({ data }: Props) => {
                   disabled={isLoading}
                   control={form.control}
                   name="name"
-                  render={field => (
+                  render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormLabel>Agency Name</FormLabel>
                       <FormControl>
@@ -237,7 +245,7 @@ const AgencyDetails = ({ data }: Props) => {
                   disabled={isLoading}
                   control={form.control}
                   name="companyEmail"
-                  render={field => (
+                  render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormLabel>Agency Email</FormLabel>
                       <FormControl>
@@ -257,20 +265,16 @@ const AgencyDetails = ({ data }: Props) => {
                   disabled={isLoading}
                   control={form.control}
                   name="companyPhone"
-                  render={field => (
+                  render={({ field }) => (
                     <FormItem className="flex-1">
                       <FormLabel>Agency Phone Number</FormLabel>
                       <FormControl>
-                        <Input
-                          readOnly
-                          placeholder="Your Agency Name"
-                          {...field}
-                        ></Input>
+                        <Input placeholder="Phone" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
-                ></FormField>
+                />
               </div>
               <FormField
                 disabled={isLoading}
