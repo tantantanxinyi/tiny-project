@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   AgencySidebarOption,
   SubAccountSidebarOption,
@@ -26,6 +26,10 @@ const MenuOptions = ({
   user,
   defaultOpen,
 }: Props) => {
+  const openState = useMemo(
+    () => (defaultOpen ? { open: true } : {}),
+    [defaultOpen],
+  );
   return <div>MenuOptions</div>;
 };
 
