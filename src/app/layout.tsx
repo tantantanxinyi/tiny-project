@@ -1,14 +1,16 @@
-import type { Metadata } from "next";
-import { DM_Sans, Inter } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { DM_Sans, Inter } from 'next/font/google';
+import './globals.css';
 
-import { ThemeProvider } from "../../providers/theme-providers";
+import { ThemeProvider } from '../../providers/theme-providers';
+import ModalProvider from '../../providers/modal-provider';
+import { Toaster } from '@/components/ui/toaster';
 
-const font = DM_Sans({ subsets: ["latin"] });
+const font = DM_Sans({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Plura",
-  description: "All in one Agency Solution",
+  title: 'Plura',
+  description: 'All in one Agency Solution',
 };
 
 export default function RootLayout({
@@ -17,15 +19,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body className={font.className}>
-      <ThemeProvider 
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange>
-          {children}
-      </ThemeProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {/* add ModalProvider */}
+          <ModalProvider>
+            {children} <Toaster />
+          </ModalProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

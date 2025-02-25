@@ -3,8 +3,7 @@
 // like zustand library
 
 import { Agency, User } from '@prisma/client';
-import { useContext, useEffect, useState } from 'react';
-import { createContext } from 'vm';
+import { useContext, useEffect, useState, createContext } from 'react';
 
 interface ModalProviderProps {
   children: React.ReactNode;
@@ -22,12 +21,7 @@ type ModalContxtType = {
   setClose: () => void;
 };
 
-export const ModalContext = createContext<ModalContxtType>({
-  data: {},
-  isOpen: false,
-  setOpen: (modal: React.ReactNode, fetchData?: () => Promise<any>) => {},
-  setClose: () => {},
-});
+const ModalContext = createContext<ModalContxtType | undefined>(undefined);
 
 const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [isOpen, setisOpen] = useState(false);
@@ -71,7 +65,9 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 export const useModal = () => {
   const context = useContext(ModalContext);
   if (!context) {
-    throw new Error('useMoal must be used within the modal provider');
+    throw new Error('useModal must be used within the modal provider');
   }
   return context;
 };
+
+export default ModalProvider;

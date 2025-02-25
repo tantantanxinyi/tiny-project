@@ -30,6 +30,8 @@ import {
 } from '../ui/command';
 import Link from 'next/link';
 import { sub } from 'date-fns';
+import { useModal } from '../../../providers/modal-provider';
+import CustomModal from '../global/custom-modal';
 
 type Props = {
   defaultOpen?: boolean;
@@ -50,6 +52,8 @@ const MenuOptions = ({
   user,
   defaultOpen,
 }: Props) => {
+  // setOpen
+  const { setOpen } = useModal();
   const [isMounted, setIsMounted] = useState(false); // 解决 hydration 水合问题
   const openState = useMemo(
     () => (defaultOpen ? { open: true } : {}),
@@ -233,7 +237,17 @@ const MenuOptions = ({
                   </CommandList>
                   {(user?.role === 'AGENCY_OWNER' ||
                     user?.role === 'AGECNY_ADMIN') && (
-                    <Button className="w-full flex gap-2">
+                    <Button
+                      className="w-full flex gap-2"
+                      onClick={() => {
+                        setOpen(
+                          <CustomModal
+                            title="Create A Subaccount"
+                            subheading="You can switch between your agency"
+                          ></CustomModal>,
+                        );
+                      }}
+                    >
                       <PlusCircleIcon size={15} />
                       Create Sub Account
                     </Button>
