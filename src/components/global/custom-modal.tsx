@@ -12,13 +12,13 @@ type Props = {
   title: string;
   subheading: string;
   children: React.ReactNode;
-  defaultOpen: boolean;
+  defaultOpen?: boolean;
 };
 
 const customModal = ({ children, defaultOpen, subheading, title }: Props) => {
-  const { isOepn, setClose } = useModal();
+  const { isOpen, setClose } = useModal();
   return (
-    <Dialog open={isOepn || defaultOpen} onOpenChange={setClose}>
+    <Dialog open={isOpen || defaultOpen} onOpenChange={setClose}>
       <DialogContent className="overflow-scroll md:max-h-[700px] md:h-fit h-screen bg-card">
         <DialogHeader className="pt-8 text-left">
           <DialogTitle>{title}</DialogTitle>

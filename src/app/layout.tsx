@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { DM_Sans, Inter } from 'next/font/google';
 import './globals.css';
 
-import { ThemeProvider } from '../../providers/theme-providers';
-import ModalProvider from '../../providers/modal-provider';
+import { ThemeProvider } from '../providers/theme-providers';
+import ModalProvider from '../providers/modal-provider';
 import { Toaster } from '@/components/ui/toaster';
 
 const font = DM_Sans({ subsets: ['latin'] });
