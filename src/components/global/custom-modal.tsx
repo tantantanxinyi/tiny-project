@@ -1,12 +1,13 @@
 'use client';
 import { useModal } from '@/providers/modal-provider';
 import React from 'react';
-import { Dialog, DialogHeader } from '../ui/dialog';
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
-  DialogTitle,
-} from '@radix-ui/react-dialog';
+  DialogHeader,
+} from '../ui/dialog';
+import { DialogTitle } from '@radix-ui/react-dialog';
 
 type Props = {
   title: string;
@@ -15,13 +16,13 @@ type Props = {
   defaultOpen?: boolean;
 };
 
-const customModal = ({ children, defaultOpen, subheading, title }: Props) => {
+const CustomModal = ({ children, defaultOpen, subheading, title }: Props) => {
   const { isOpen, setClose } = useModal();
   return (
     <Dialog open={isOpen || defaultOpen} onOpenChange={setClose}>
       <DialogContent className="overflow-scroll md:max-h-[700px] md:h-fit h-screen bg-card">
         <DialogHeader className="pt-8 text-left">
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">{title}</DialogTitle>
           <DialogDescription>{subheading}</DialogDescription>
           {children}
         </DialogHeader>
@@ -30,4 +31,4 @@ const customModal = ({ children, defaultOpen, subheading, title }: Props) => {
   );
 };
 
-export default customModal;
+export default CustomModal;

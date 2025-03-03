@@ -1,9 +1,7 @@
 'use client';
-
-// like zustand library
-
-import { Agency, User } from '@prisma/client';
-import { useContext, useEffect, useState, createContext } from 'react';
+import { PricesList, TicketDetails } from '@/lib/types';
+import { Agency, Contact, Plan, User } from '@prisma/client';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 interface ModalProviderProps {
   children: React.ReactNode;
@@ -12,25 +10,35 @@ interface ModalProviderProps {
 export type ModalData = {
   user?: User;
   agency?: Agency;
+  ticket?: TicketDetails[0];
+  contact?: Contact;
+  plans?: {
+    defaultPriceId: Plan;
+    plans: PricesList['data'];
+  };
 };
-
-type ModalContxtType = {
+type ModalContextType = {
   data: ModalData;
   isOpen: boolean;
   setOpen: (modal: React.ReactNode, fetchData?: () => Promise<any>) => void;
   setClose: () => void;
 };
 
-const ModalContext = createContext<ModalContxtType | undefined>(undefined);
+export const ModalContext = createContext<ModalContextType>({
+  data: {},
+  isOpen: false,
+  setOpen: (modal: React.ReactNode, fetchData?: () => Promise<any>) => {},
+  setClose: () => {},
+});
 
 const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
-  const [isOpen, setisOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [data, setData] = useState<ModalData>({});
   const [showingModal, setShowingModal] = useState<React.ReactNode>(null);
-  const [isMounted, setisMounted] = useState(false); // stop hydration
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setisMounted(true);
+    setIsMounted(true);
   }, []);
 
   const setOpen = async (
@@ -38,21 +46,20 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     fetchData?: () => Promise<any>,
   ) => {
     if (modal) {
-      setData(fetchData ? { ...data, ...(await fetchData()) } : {});
+      if (fetchData) {
+        setData({ ...data, ...(await fetchData()) } || {});
+      }
+      setShowingModal(modal);
+      setIsOpen(true);
     }
-
-    setShowingModal(modal);
-    setisOpen(true);
   };
 
   const setClose = () => {
-    setisOpen(false);
+    setIsOpen(false);
     setData({});
   };
 
-  if (!isMounted) {
-    return null;
-  }
+  if (!isMounted) return null;
 
   return (
     <ModalContext.Provider value={{ data, setOpen, setClose, isOpen }}>

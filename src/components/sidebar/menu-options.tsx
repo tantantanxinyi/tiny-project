@@ -246,7 +246,7 @@ const MenuOptions = ({
                           setOpen(
                             <CustomModal
                               title="Create A Subaccount"
-                              subheading="You can switch between your agency"
+                              subheading="You can switch between your agency account and the subaccount from the sidebar"
                             >
                               <SubAccountDetails
                                 agencyDetails={user?.Agency as Agency}
