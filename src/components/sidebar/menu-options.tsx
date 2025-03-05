@@ -34,6 +34,8 @@ import { sub } from 'date-fns';
 import { useModal } from '../../providers/modal-provider';
 import CustomModal from '../global/custom-modal';
 import SubAccountDetails from '../forms/subaccount-details';
+import { Separator } from '@radix-ui/react-dropdown-menu';
+import { icons } from '../../lib/constant';
 
 type Props = {
   defaultOpen?: boolean;
@@ -262,6 +264,41 @@ const MenuOptions = ({
               }
             </PopoverContent>
           </Popover>
+          <p className="text-muted-foreground text-xs mb-2">MENU LINKS</p>
+          <Separator className="mb-4"></Separator>
+          <nav className="relative">
+            <Command className="rounded-lg overflow-visible bg-transparent">
+              <CommandInput placeholder="Search..."></CommandInput>
+              <CommandList className="py-4 pb-16 overflow-visible">
+                <CommandEmpty>No Result Found</CommandEmpty>
+                <CommandGroup className="overflow-visible">
+                  {sidebarOpt.map(sidebarOptions => {
+                    let val;
+                    const result = icons.find(
+                      icon => icon.value === sidebarOptions.icon,
+                    );
+                    if (result) {
+                      val = <result.path></result.path>;
+                    }
+                    return (
+                      <CommandItem
+                        key={sidebarOptions.id}
+                        className="md:w-[320px]-full"
+                      >
+                        <Link
+                          href={sidebarOptions.link}
+                          className="flex items-center gap-2 hover:bg-transparent rounded-md transition-all md:w-full w-[320px]"
+                        >
+                          {val}
+                          <span>{sidebarOptions.name}</span>
+                        </Link>
+                      </CommandItem>
+                    );
+                  })}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </nav>
         </div>
       </SheetContent>
     </Sheet>
