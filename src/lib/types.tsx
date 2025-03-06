@@ -1,4 +1,4 @@
-import { Prisma, Role } from '@prisma/client';
+import { Prisma, Role, Notification } from '@prisma/client';
 
 export type NotificationWithUser =
   | ({
