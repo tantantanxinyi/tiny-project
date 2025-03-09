@@ -35,7 +35,12 @@ const SettingPage = async ({ params }: Props) => {
   return (
     <div className="flex ld:!flex-row flex-col gap-4">
       <AgencyDetails data={agencyDetails}></AgencyDetails>
-      <userDetails type="agecny" id={params.agencyId} subAccounts={subAccounts}></userDetails>
+      <UserDetails
+        type="agecny"
+        id={params.agencyId}
+        subAccounts={subAccounts}
+        userData={userDetails}
+      ></UserDetails>
     </div>
   );
 };
