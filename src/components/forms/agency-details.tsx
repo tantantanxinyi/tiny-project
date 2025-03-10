@@ -38,7 +38,7 @@ import { Switch } from '../ui/switch';
 import {
   deleteAgency,
   initUser,
-  savaActivityLogNotification,
+  saveActivityLogsNotification,
   updateAgencyDetails,
   upsertAgency,
 } from '@/lib/queries';
@@ -156,7 +156,7 @@ const AgencyDetails = ({ data }: Props) => {
         //   return router.refresh();
         // }
 
-        return router.refresh(); 
+        return router.refresh();
       }
     } catch (error) {
       console.log(error);
@@ -387,7 +387,7 @@ const AgencyDetails = ({ data }: Props) => {
                       await updateAgencyDetails(data?.id, {
                         goal: val,
                       });
-                      await savaActivityLogNotification({
+                      await saveActivityLogsNotification({
                         agencyId: data?.id,
                         description: `update agency goal to |  ${val} subaccount`,
                         subaccountId: undefined,
