@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { useToast } from '../ui/use-toast';
 import { useRouter } from 'next/navigation';
 import {
+  changeUserPermissions,
   getAuthUserDetails,
   getUserPermissions,
   saveActivityLogsNotification,
@@ -47,6 +48,7 @@ import {} from '@tremor/react';
 import { Button } from '../ui/button';
 import Loading from '../global/loading';
 import { Separator } from '@radix-ui/react-dropdown-menu';
+import { v4 } from 'uuid';
 
 type Props = {
   id: string | null;
@@ -56,7 +58,7 @@ type Props = {
 };
 
 const UserDetails = ({ id, type, userData, subAccounts }: Props) => {
-  const [subAccountPermisson, setSubAccountsPermission] =
+  const [subAccountPermissions, setSubAccountsPermissions] =
     useState<UserWithPermissionsAndSubAccounts | null>(null);
 
   const { data, setClose } = useModal();
@@ -113,7 +115,7 @@ const UserDetails = ({ id, type, userData, subAccounts }: Props) => {
     const getPermissions = async () => {
       if (!data.user) return;
       const permission = await getUserPermissions(data.user.id);
-      setSubAccountsPermission(permission);
+      setSubAccountsPermissions(permission);
     };
     getPermissions();
   }, [data, form]);
@@ -127,6 +129,35 @@ const UserDetails = ({ id, type, userData, subAccounts }: Props) => {
       form.reset(userData); // userData存在时，表单重置成userData的值，通常用于组件接受新的用户信息时更新form => 外部数据更新
     }
   }, [userData, data]);
+
+  //
+  const onChangePermission = async (
+    subAccountId: string,
+    val: boolean,
+    permissionsId: string | undefined,
+  ) => {
+    if (!data.user?.email) return;
+    setLoadingPermissions(true);
+    const response = await changeUserPermissions(
+      permissionsId ? permissionsId : v4(),
+      data.user.email,
+      subAccountId,
+      val,
+    );
+    if (type === 'agency') {
+      await saveActivityLogsNotification({
+        agencyId: authUserData?.Agency?.id,
+        description: `Gave ${userData?.name} access to | ${
+          subAccountPermissions?.Permissions.find(
+            p => p.subAccountId === subAccountId,
+          )?.SubAccount.name
+        } `,
+        subaccountId: subAccountPermissions?.Permissions.find(
+          p => p.subAccountId === subAccountId,
+        )?.SubAccount.id,
+      });
+    }
+  };
 
   // saving user infomation
   const onSubmit = async (values: z.infer<typeof userDataSchema>) => {
@@ -294,6 +325,25 @@ const UserDetails = ({ id, type, userData, subAccounts }: Props) => {
                   access control for each Sub Account. This is only visible to
                   agency owners
                 </FormDescription>
+                <div className="flex felx-col gap-4">
+                  {subAccounts?.map(subAccount => {
+                    const subAccountPermissonsDetails =
+                      subAccountPermissions?.Permissions.find(
+                        p => p.subAccountId === subAccount.id,
+                      );
+                    return (
+                      <div
+                        key={subAccount.id}
+                        className="flex flex-col items-center justify-between rounded-lg border p-4"
+                      >
+                        <div>
+                          <p>{subAccount.name}</p>
+                        </div>
+                        <Switch></Switch>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </form>
