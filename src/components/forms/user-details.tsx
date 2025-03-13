@@ -145,6 +145,7 @@ const UserDetails = ({ id, type, userData, subAccounts }: Props) => {
       val,
     );
     if (type === 'agency') {
+      // 记录活动日志 用户对于特定子账户的访问权限
       await saveActivityLogsNotification({
         agencyId: authUserData?.Agency?.id,
         description: `Gave ${userData?.name} access to | ${
@@ -157,6 +158,28 @@ const UserDetails = ({ id, type, userData, subAccounts }: Props) => {
         )?.SubAccount.id,
       });
     }
+    if (response) {
+      toast({
+        title: 'Success',
+        description: 'The request was successful',
+      });
+      if (subAccountPermissions) {
+        subAccountPermissions.Permissions.find(perm => {
+          if (perm.subAccountId === subAccountId) {
+            return { ...perm, access: !perm.access };
+          }
+          return perm;
+        });
+      }
+    } else {
+      toast({
+        variant: 'destructive',
+        title: 'Failed',
+        description: 'Could not update permission',
+      });
+    }
+    router.refresh();
+    setLoadingPermissions(false);
   };
 
   // saving user infomation
