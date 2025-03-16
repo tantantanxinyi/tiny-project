@@ -49,10 +49,11 @@ import { Button } from '../ui/button';
 import Loading from '../global/loading';
 import { Separator } from '@radix-ui/react-dropdown-menu';
 import { v4 } from 'uuid';
+import { Switch } from '../ui/switch';
 
 type Props = {
   id: string | null;
-  type: 'agecny' | 'subaccount';
+  type: 'agency' | 'subaccount';
   userData?: Partial<User>;
   subAccounts?: SubAccount[];
 };
