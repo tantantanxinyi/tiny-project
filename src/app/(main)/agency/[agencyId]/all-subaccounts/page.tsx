@@ -24,6 +24,7 @@ import { SubAccount } from '@prisma/client';
 import Link from 'next/link';
 import Image from 'next/image';
 import DeleteButton from './_components/delete-button';
+import CreateSubaccountBtn from './_components/create-subaccount-btn';
 
 type Props = {
   params: {
@@ -37,7 +38,11 @@ const AllSubaccontsPage = async ({ params }: Props) => {
   return (
     <AlertDialog>
       <div className="flex flex-col">
-        <Button>Create</Button>
+        <CreateSubaccountBtn
+          user={user}
+          id={params.agencyId}
+          className="w-[200px] self-end m-6"
+        ></CreateSubaccountBtn>
         <Command className="rounded-lg bg-transparent">
           <CommandInput placeholder="Search Account..."></CommandInput>
           <CommandList>
