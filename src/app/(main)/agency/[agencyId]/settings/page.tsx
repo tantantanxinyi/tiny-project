@@ -34,10 +34,10 @@ const SettingPage = async ({ params }: Props) => {
   const subAccounts = agencyDetails.SubAccount;
 
   return (
-    <div className="flex ld:!flex-row flex-col gap-4">
+    <div className="flex lg:!flex-row flex-col gap-4">
       <AgencyDetails data={agencyDetails}></AgencyDetails>
       <UserDetails
-        type="agecny"
+        type="agency"
         id={params.agencyId}
         subAccounts={subAccounts}
         userData={userDetails}
