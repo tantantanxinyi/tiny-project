@@ -1,3 +1,4 @@
+import BlurPage from '@/components/global/blur-page';
 import { db } from '@/lib/db';
 import React from 'react';
 
@@ -31,8 +32,9 @@ const LaunchPad = async ({ params, searchParams }: Props) => {
     subaccountDetails.name &&
     subaccountDetails.state;
 
-    
-  return <div>launchPad</div>;
+  // WIP:  write up stripe
+
+  return <BlurPage>launchPad</BlurPage>;
 };
 
 export default LaunchPad;
