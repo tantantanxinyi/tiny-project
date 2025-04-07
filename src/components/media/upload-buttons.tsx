@@ -1,14 +1,15 @@
+'use client';
 import { useModal } from '@/providers/modal-provider';
-import { Button } from '@tremor/react';
+import { Button } from '../ui/button';
 import React from 'react';
 import CustomModal from '../global/custom-modal';
 import UploadMediaForm from '../forms/upload-media';
 
 type Props = {
-  subaacountId: string;
+  subaccountId: string;
 };
 
-const MediaUploadButton = ({ subaacountId }: Props) => {
+const MediaUploadButton = ({ subaccountId }: Props) => {
   const { isOpen, setOpen, setClose } = useModal();
   return (
     <Button
@@ -18,12 +19,12 @@ const MediaUploadButton = ({ subaacountId }: Props) => {
             title="Upload Media"
             subheading="upload a file to your media bucket"
           >
-            <UploadMediaForm subaccount={subaacountId}></UploadMediaForm>
+            <UploadMediaForm subaccountId={subaccountId}></UploadMediaForm>
           </CustomModal>,
         );
       }}
     >
-      upload-buttons
+      Upload
     </Button>
   );
 };
