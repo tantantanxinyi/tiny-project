@@ -1,6 +1,16 @@
-import { Prisma, Role, Notification, Ticket, Tag, User, Contact, Lane } from '@prisma/client';
+import {
+  Prisma,
+  Role,
+  Notification,
+  Ticket,
+  Tag,
+  User,
+  Contact,
+  Lane,
+} from '@prisma/client';
 import { getAuthUserDetails, getMedia, getUserPermissions } from './queries';
 import { db } from './db';
+import { z } from 'zod';
 
 export type NotificationWithUser =
   | ({
@@ -54,3 +64,14 @@ export type TicketAndTags = Ticket & {
 export type LaneDetail = Lane & {
   Tickets: TicketAndTags[];
 };
+
+export const CreatePipelineFormSchema = z.object({
+  name: z.string().min(1),
+});
+
+export const CreateFunnelFormSchema = z.object({
+  name: z.string().min(1),
+  description: z.string(),
+  subDomainName: z.string().optional(),
+  favicon: z.string().optional(),
+});

@@ -1,8 +1,10 @@
+import { Tabs, TabsList } from '@/components/ui/tabs';
 import { db } from '@/lib/db';
-import { getPipelineDetails } from '@/lib/queries';
+import { getLanesWithTicketAndTags, getPipelineDetails } from '@/lib/queries';
 import { LaneDetail } from '@/lib/types';
 import { redirect } from 'next/navigation';
 import React from 'react';
+import PipelineInfoBar from './_components/pipeline-inforbar';
 
 type Props = {
   params: {
@@ -27,7 +29,17 @@ const PipelinePage = async ({ params }: Props) => {
     params.pipelineId,
   )) as LaneDetail[];
 
-  return <div>PipelinePage</div>;
+  return (
+    <Tabs defaultValue="view" className="w-full">
+      <TabsList className="bg-transparent border-b-2 h-16 w-full justify-between mb-4">
+        <PipelineInfoBar
+          subAccountId={params.subaccountId}
+          pipelines={pipelines}
+          pipelineId={params.pipelineId}
+        />
+      </TabsList>
+    </Tabs>
+  );
 };
 
 export default PipelinePage;
