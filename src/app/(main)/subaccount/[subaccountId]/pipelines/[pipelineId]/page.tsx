@@ -1,10 +1,11 @@
-import { Tabs, TabsList } from '@/components/ui/tabs';
 import { db } from '@/lib/db';
 import { getLanesWithTicketAndTags, getPipelineDetails } from '@/lib/queries';
 import { LaneDetail } from '@/lib/types';
 import { redirect } from 'next/navigation';
 import React from 'react';
 import PipelineInfoBar from './_components/pipeline-inforbar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import PipelineSettings from './_components/pipeline-settings';
 
 type Props = {
   params: {
@@ -37,7 +38,25 @@ const PipelinePage = async ({ params }: Props) => {
           pipelines={pipelines}
           pipelineId={params.pipelineId}
         />
+        <div>
+          <TabsTrigger value="view" className="!bg-transparent w-40">
+            Pipeline View
+          </TabsTrigger>
+          <TabsTrigger value="setting" className="!bg-transparent w-40">
+            Setting
+          </TabsTrigger>
+        </div>
       </TabsList>
+      <TabsContent value="view">
+        {/* <PipelineView lanes={lanes} /> */}
+      </TabsContent>
+      <TabsContent value="setting">
+        <PipelineSettings
+          pipelineId={params.pipelineId}
+          pipelines={pipelines}
+          subaccountId={params.subaccountId}
+        />
+      </TabsContent>
     </Tabs>
   );
 };

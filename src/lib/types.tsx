@@ -8,7 +8,12 @@ import {
   Contact,
   Lane,
 } from '@prisma/client';
-import { getAuthUserDetails, getMedia, getUserPermissions } from './queries';
+import {
+  getAuthUserDetails,
+  getMedia,
+  getPipelineDetails,
+  getUserPermissions,
+} from './queries';
 import { db } from './db';
 import { z } from 'zod';
 
@@ -75,3 +80,7 @@ export const CreateFunnelFormSchema = z.object({
   subDomainName: z.string().optional(),
   favicon: z.string().optional(),
 });
+
+export type PipelineDetailsWithLanesCardsTagsTickets = Prisma.PromiseReturnType<
+  typeof getPipelineDetails
+>;
