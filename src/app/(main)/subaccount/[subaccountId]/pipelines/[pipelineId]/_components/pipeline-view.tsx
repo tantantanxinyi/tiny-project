@@ -6,13 +6,15 @@ import { Button } from '@/components/ui/button';
 import {
   LaneDetail,
   PipelineDetailsWithLanesCardsTagsTickets,
+  TicketAndTags,
 } from '@/lib/types';
 import { useModal } from '@/providers/modal-provider';
 import { Lane, Ticket } from '@prisma/client';
-import { Plus } from 'lucide-react';
+import { Flag, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import PipelineLane from './pipeline-lane';
 
 type Props = {
   lanes: LaneDetail[];
@@ -36,6 +38,18 @@ const pipelineView = ({
   const router = useRouter();
 
   const [allLanes, setAllLanes] = useState<LaneDetail[]>();
+
+  useEffect(() => {
+    setAllLanes(lanes);
+  }, [lanes]);
+
+  const ticketsFromAllLanes: TicketAndTags[] = [];
+  lanes.forEach(item => {
+    item.Tickets.forEach(i => {
+      ticketsFromAllLanes.push(i);
+    });
+  });
+  const [allTickets, setAllTickets] = useState(ticketsFromAllLanes);
 
   const handleAddLane = () => {
     setOpen(
@@ -75,14 +89,32 @@ const pipelineView = ({
               ref={provided.innerRef}
             >
               <div className="flex mt-4">
-                {allLanes?.map(lane => (
-                  <PipeLineLane></PipeLineLane>
+                {allLanes?.map((lane, index) => (
+                  <PipelineLane
+                    allTickets={allTickets}
+                    setAllTickets={setAllTickets}
+                    subaccountId={subaccountId}
+                    pipelineId={pipelineId}
+                    tickets={lane.Tickets}
+                    laneDetails={lane}
+                    index={index}
+                    key={lane.id}
+                  />
                 ))}
                 {provided.placeholder}
               </div>
             </div>
           )}
         </Droppable>
+        {allLanes?.length == 0 && (
+          <div className="flex items-center justify-center w-full flex-col">
+            <div className="opacity-100">
+              <Flag width="100%" height="100%" className='text-muted-foreground'>
+
+              </Flag>
+            </div>
+          </div>
+        )}
       </div>
     </DragDropContext>
   );
