@@ -32,6 +32,7 @@ import React, { Dispatch, SetStateAction, useMemo } from 'react';
 // import PipelineTicket from './pipeline-ticket'
 import CustomModal from '@/components/global/custom-modal';
 import TicketForm from '@/components/forms/ticket-form';
+import PipelineTicket from './pipeline-ticket';
 // import PipelineTicket from './pipeline-ticket';
 
 //work in progress: wire up the ticket
@@ -181,7 +182,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                           ref={provided.innerRef}
                           className="mt-2"
                         >
-                          {/* {tickets.map((ticket, index) => (
+                          {tickets.map((ticket, index) => (
                             <PipelineTicket
                               allTickets={allTickets}
                               setAllTickets={setAllTickets}
@@ -190,7 +191,8 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                               key={ticket.id.toString()}
                               index={index}
                             />
-                          ))} */}
+                          ))}
+
                           {provided.placeholder}
                         </div>
                       </div>
