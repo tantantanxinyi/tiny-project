@@ -48,8 +48,8 @@ import {
 } from '../ui/command';
 import { cn } from '@/lib/utils';
 import Loading from '../global/loading';
-// import TagCreator from '../global/tag-creator';
-
+import TagCreator from '../global/tag-creator';
+ 
 type Props = {
   laneId: string;
   subaccountId: string;
@@ -203,11 +203,11 @@ const TicketForm = ({ getNewTicket, laneId, subaccountId }: Props) => {
               )}
             />
             <h3>Add tags</h3>
-            {/* <TagCreator
+            <TagCreator
               subAccountId={subaccountId}
               getSelectedTags={setTags}
               defaultTags={defaultData.ticket?.Tags || []}
-            /> */}
+            />
             <FormLabel>Assigned To Team Member</FormLabel>
             <Select onValueChange={setAssignedTo} defaultValue={assignedTo}>
               <SelectTrigger>
